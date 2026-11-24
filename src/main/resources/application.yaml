@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: SWIGGY-GATEWAY
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: restaurant-service-route
+              uri: lb://RESTAURANT-SERVICE
+              predicates:
+                - Path=/v1/restaurant/**
+              filters:
+                - AuthenticationFilter
+
+            - id: swiggy-app-route
+              uri: lb://SWIGGY-APP
+              predicates:
+                - Path=/swiggy/**
+              filters:
+                - AuthenticationFilter
+
+            - id: identity-service-route
+              uri: lb://IDENTITY-SERVICE
+              predicates:
+                - Path=/auth/**
+
+
+
+
+server:
+  port: 8083
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
